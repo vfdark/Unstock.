@@ -12,12 +12,25 @@ extension Color {
     }
 }
 
-// Cream area with wavy top and bottom edges
+
+enum SplashDesign {
+    static let mint  = Color(hex: "D6EBD6")
+    static let sky   = Color(hex: "D1E6F2")
+    static let sand  = Color(hex: "F2E8BF")
+    static let cream = Color(hex: "FEFAF3")
+
+    static let logoWidthRatio: CGFloat = 0.58   // 230 / 393
+    static let topFraction: CGFloat = 0.15
+    static let bottomFraction: CGFloat = 0.11
+    static let amplitudeRatio: CGFloat = 0.046  // 18 / 393
+    static let waves: CGFloat = 1.5
+}
+
 struct WavyBand: Shape {
-    var topFraction: CGFloat = 0.22
-    var bottomFraction: CGFloat = 0.20
-    var amplitude: CGFloat = 16
-    var waves: CGFloat = 1.5
+    var topFraction: CGFloat
+    var bottomFraction: CGFloat
+    var amplitude: CGFloat
+    var waves: CGFloat
 
     func path(in rect: CGRect) -> Path {
         var path = Path()
@@ -45,29 +58,30 @@ struct SplashView: View {
     @State private var logoVisible = false
 
     var body: some View {
-        ZStack {
-            // Pastel gradient visible at top and bottom
-            LinearGradient(
-                colors: [
-                    Color(red: 0.84, green: 0.92, blue: 0.84),
-                    Color(red: 0.82, green: 0.90, blue: 0.95),
-                    Color(red: 0.95, green: 0.91, blue: 0.75)
-                ],
-                startPoint: .leading,
-                endPoint: .trailing
-            )
+        GeometryReader { geo in
+            ZStack {
+                LinearGradient(
+                    colors: [SplashDesign.mint, SplashDesign.sky, SplashDesign.sand],
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
 
-            // Cream center with wavy edges
-            WavyBand()
-                .fill(Color(hex: "FEFAF3"))
+                WavyBand(
+                    topFraction: SplashDesign.topFraction,
+                    bottomFraction: SplashDesign.bottomFraction,
+                    amplitude: geo.size.width * SplashDesign.amplitudeRatio,
+                    waves: SplashDesign.waves
+                )
+                .fill(SplashDesign.cream)
 
-            // Logo
-            Image("logo")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 260)
-                .scaleEffect(logoVisible ? 1 : 0.8)
-                .opacity(logoVisible ? 1 : 0)
+                Image("logo")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: geo.size.width * SplashDesign.logoWidthRatio)
+                    .scaleEffect(logoVisible ? 1 : 0.8)
+                    .opacity(logoVisible ? 1 : 0)
+            }
+            .frame(width: geo.size.width, height: geo.size.height)
         }
         .ignoresSafeArea()
         .onAppear {
