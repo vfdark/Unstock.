@@ -74,73 +74,90 @@ struct ExerciseCard: View {
 // MARK: - Home screen
 struct HomeView: View {
     var body: some View {
-        ZStack {
-            WavyBackground()
+        NavigationStack {
+            ZStack {
+                WavyBackground()
 
-            VStack(alignment: .leading, spacing: 0) {
+                VStack(alignment: .leading, spacing: 0) {
 
-                // Header
-                VStack(alignment: .leading, spacing: 4) {
-                    HStack(spacing: 4) {
-                        Text("Welcome")
-                            .font(.system(size: 17, weight: .bold))
-                            .tracking(1.5)
-                        Image(systemName: "lightbulb")
-                            .foregroundStyle(.orange)
-                    }
-                    .padding(.leading, 4)
-
-                    Text("Unblock Your\nSpark.")
-                        .font(.system(size: 40, weight: .bold))
-
-                    Rectangle()
-                        .fill(.orange)
-                        .frame(width: 74, height: 1.5)
-                        .padding(.top, 2)
-
-                    Text("Pick a quick exercise and start")
-                        .font(.system(size: 16))
-                        .foregroundStyle(Color(white: 0.25))
+                    // Header
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack(spacing: 4) {
+                            Text("Welcome")
+                                .font(.system(size: 17, weight: .bold))
+                                .tracking(1.5)
+                            Image(.lightBulb)
+                                .foregroundStyle(.orange)
+                        }
                         .padding(.leading, 4)
-                        .padding(.top, 6)
+
+                        Text("Unblock Your\nSpark.")
+                            .font(.system(size: 40, weight: .bold))
+
+                        Rectangle()
+                            .fill(.orange)
+                            .frame(width: 74, height: 1.5)
+                            .padding(.top, 2)
+
+                        Text("Pick a quick exercise and start")
+                            .font(.system(size: 16))
+                            .foregroundStyle(Color(white: 0.25))
+                            .padding(.leading, 4)
+                            .padding(.top, 6)
+                    }
+                    .padding(.horizontal, 24)
+
+                    // Cards (tap to open each game)
+                    VStack(spacing: 20) {
+
+                        NavigationLink {
+                            SplashItView()
+                        } label: {
+                            ExerciseCard(
+                                icon: Image(.paintArt),
+                                title: "Splash It",
+                                description: "Pick the right colors and bring the logo to life.",
+                                accent: Color(red: 0.28, green: 0.42, blue: 0.22),
+                                gradient: [Color(red: 0.96, green: 0.96, blue: 0.92),
+                                           Color(red: 0.78, green: 0.88, blue: 0.75)]
+                            )
+                        }
+
+                        NavigationLink {
+                            ShapeUpView()
+                        } label: {
+                            ExerciseCard(
+                                icon: Image(.shapeUp),
+                                title: "Shape Up",
+                                description: "Fit the shapes together to build the picture.",
+                                accent: Color(red: 0.17, green: 0.37, blue: 0.58),
+                                gradient: [Color(red: 0.95, green: 0.95, blue: 0.94),
+                                           Color(red: 0.86, green: 0.90, blue: 0.94)]
+                            )
+                        }
+
+                        NavigationLink {
+                            SloganSparkView()
+                        } label: {
+                            ExerciseCard(
+                                icon: Image(.sloganSpark),
+                                title: "Slogan Spark",
+                                description: "Come up with a catchy slogan for the company.",
+                                accent: Color(red: 0.76, green: 0.72, blue: 0.20),
+                                gradient: [Color(red: 0.99, green: 0.98, blue: 0.95),
+                                           Color(red: 0.99, green: 0.96, blue: 0.86)]
+                            )
+                        }
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 14)
+
+                    Spacer()
                 }
-                .padding(.horizontal, 24)
-
-                // Cards
-                VStack(spacing: 20) {
-                    ExerciseCard(
-                        icon: Image(systemName: "paintpalette"),
-                        title: "Splash It",
-                        description: "Pick the right colors and bring the logo to life.",
-                        accent: Color(red: 0.28, green: 0.42, blue: 0.22),
-                        gradient: [Color(red: 0.96, green: 0.96, blue: 0.92),
-                                   Color(red: 0.78, green: 0.88, blue: 0.75)]
-                    )
-
-                    ExerciseCard(
-                        icon: Image(systemName: "cube"),
-                        title: "Shape Up",
-                        description: "Fit the shapes together to build the picture.",
-                        accent: Color(red: 0.17, green: 0.37, blue: 0.58),
-                        gradient: [Color(red: 0.95, green: 0.95, blue: 0.94),
-                                   Color(red: 0.86, green: 0.90, blue: 0.94)]
-                    )
-
-                    ExerciseCard(
-                        icon: Image(systemName: "pencil"),
-                        title: "Slogan Spark",
-                        description: "Come up with a catchy slogan for the company.",
-                        accent: Color(red: 0.76, green: 0.72, blue: 0.20),
-                        gradient: [Color(red: 0.99, green: 0.98, blue: 0.95),
-                                   Color(red: 0.99, green: 0.96, blue: 0.86)]
-                    )
-                }
-                .padding(.horizontal, 16)
-                .padding(.top, 14)
-
-                Spacer()
+                .padding(.top, 62)
             }
-            .padding(.top, 62)
+            .toolbar(.hidden, for: .navigationBar)
         }
     }
 }
