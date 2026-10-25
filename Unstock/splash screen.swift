@@ -12,46 +12,9 @@ extension Color {
     }
 }
 
-
 enum SplashDesign {
-    static let mint  = Color(hex: "D6EBD6")
-    static let sky   = Color(hex: "D1E6F2")
-    static let sand  = Color(hex: "F2E8BF")
     static let cream = Color(hex: "FEFAF3")
-
     static let logoWidthRatio: CGFloat = 0.58   // 230 / 393
-    static let topFraction: CGFloat = 0.15
-    static let bottomFraction: CGFloat = 0.11
-    static let amplitudeRatio: CGFloat = 0.046  // 18 / 393
-    static let waves: CGFloat = 1.5
-}
-
-struct WavyBand: Shape {
-    var topFraction: CGFloat
-    var bottomFraction: CGFloat
-    var amplitude: CGFloat
-    var waves: CGFloat
-
-    func path(in rect: CGRect) -> Path {
-        var path = Path()
-        let top = rect.height * topFraction
-        let bottom = rect.height * (1 - bottomFraction)
-
-        path.move(to: CGPoint(x: rect.minX, y: top))
-        for x in stride(from: rect.minX, through: rect.maxX, by: 2) {
-            let progress = x / rect.width
-            let y = top + sin(progress * .pi * 2 * waves) * amplitude
-            path.addLine(to: CGPoint(x: x, y: y))
-        }
-        path.addLine(to: CGPoint(x: rect.maxX, y: bottom))
-        for x in stride(from: rect.maxX, through: rect.minX, by: -2) {
-            let progress = x / rect.width
-            let y = bottom + sin(progress * .pi * 2 * waves + .pi) * amplitude
-            path.addLine(to: CGPoint(x: x, y: y))
-        }
-        path.closeSubpath()
-        return path
-    }
 }
 
 struct SplashView: View {
@@ -60,20 +23,27 @@ struct SplashView: View {
     var body: some View {
         GeometryReader { geo in
             ZStack {
-                LinearGradient(
-                    colors: [SplashDesign.mint, SplashDesign.sky, SplashDesign.sand],
-                    startPoint: .leading,
-                    endPoint: .trailing
-                )
+                SplashDesign.cream
 
-                WavyBand(
-                    topFraction: SplashDesign.topFraction,
-                    bottomFraction: SplashDesign.bottomFraction,
-                    amplitude: geo.size.width * SplashDesign.amplitudeRatio,
-                    waves: SplashDesign.waves
-                )
-                .fill(SplashDesign.cream)
+                // Upper background image
+                VStack(spacing: 0) {
+                    Image("Upper Background waves")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: geo.size.width)
+                    Spacer()
+                }
 
+                // Lower background image
+                VStack(spacing: 0) {
+                    Spacer()
+                    Image("background Wvaes")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: geo.size.width)
+                }
+
+                // Logo
                 Image("logo")
                     .resizable()
                     .scaledToFit()
