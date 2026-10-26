@@ -63,6 +63,7 @@ struct SplashIt3: View {
                     .font(.system(size: 28, weight: .medium))
                     .foregroundStyle(Color(white: 0.15))
                     .frame(width: 44, height: 44)
+                    .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
             .accessibilityLabel("Back")
