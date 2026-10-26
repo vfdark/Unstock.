@@ -12,7 +12,7 @@ struct Brand: Identifiable {
     let id = UUID()
     let name: String
     let logo: String              // اسم الـ Image Set في Assets
-    let slogan: String            // السلوقن الأصلي
+    let slogan: String            // السلوقن الأصلي (غير مستخدم حالياً في البوب أب)
     var fillsCircle: Bool = false // true = الصورة تغطي الدايرة كاملة
  
     static let all: [Brand] = [
@@ -39,19 +39,17 @@ struct WaveShape: Shape {
     }
 }
  
-// MARK: - Slogan Spark
+// MARK: - Slogan Spark (Game 1)
 struct Slogansparkview: View {
     @Environment(\.dismiss) private var dismiss
     @FocusState private var isFocused: Bool
  
     @State private var brandIndex = 0
     @State private var slogan = ""
-    @State private var submittedSlogan = ""
-    @State private var showResult = false
+    @State private var showPopup = false
  
     private let brands = Brand.all
     private var brand: Brand { brands[brandIndex] }
-    private var isLast: Bool { brandIndex == brands.count - 1 }
     private var isEmpty: Bool { slogan.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
  
     // الألوان (من التصميم)
@@ -88,7 +86,14 @@ struct Slogansparkview: View {
             .scrollDismissesKeyboard(.interactively)
             .scrollBounceBehavior(.basedOnSize)
  
-            if showResult { resultPopup }
+            // POP UP: خلفية معتمة + صفحة البنت الثانية (PopUpView)
+            if showPopup {
+                ZStack {
+                    Color.black.opacity(0.35).ignoresSafeArea()
+                    PopUpView(onHome: goHome, onReplay: replay)
+                }
+                .transition(.opacity)
+            }
         }
     }
  
@@ -118,7 +123,7 @@ struct Slogansparkview: View {
         Image(brand.logo)
             .resizable()
             .aspectRatio(contentMode: brand.fillsCircle ? .fill : .fit)
-            .padding(brand.fillsCircle ? 0 : 22)
+            .padding(brand.fillsCircle ? 0 :12)
             .frame(width: 182, height: 182)
             .background(Color.white)
             .clipShape(Circle())
@@ -171,68 +176,33 @@ struct Slogansparkview: View {
                 .background(Capsule().fill(Color.white))
                 .overlay(Capsule().stroke(borderGray, lineWidth: 1))
         }
-        .disabled(isEmpty)
-        .opacity(isEmpty ? 0.5 : 1)
-    }
- 
-    // MARK: Result popup
-    private var resultPopup: some View {
-        ZStack {
-            Color.black.opacity(0.35).ignoresSafeArea()
- 
-            VStack(spacing: 14) {
-                Text("Your slogan")
-                    .font(.system(size: 14, weight: .light))
-                Text("“\(submittedSlogan)”")
-                    .font(.system(size: 20, weight: .semibold))
-                    .multilineTextAlignment(.center)
- 
-                Divider().padding(.vertical, 4)
- 
-                Text("\(brand.name)’s real slogan")
-                    .font(.system(size: 14, weight: .light))
-                Text("“\(brand.slogan)”")
-                    .font(.system(size: 20, weight: .semibold))
-                    .multilineTextAlignment(.center)
- 
-                Button { nextBrand() } label: {
-                    Text(isLast ? "Play again" : "Next brand")
-                        .font(.system(size: 20, weight: .bold))
-                        .foregroundColor(.black)
-                        .frame(width: 200, height: 52)
-                        .background(Capsule().fill(Color.white))
-                        .overlay(Capsule().stroke(borderGray, lineWidth: 1))
-                }
-                .padding(.top, 8)
-            }
-            .foregroundColor(.black)
-            .padding(24)
-            .frame(width: 320)
-            .background(
-                RoundedRectangle(cornerRadius: 30, style: .continuous)
-                    .fill(LinearGradient(colors: [cardTop, cardBottom],
-                                         startPoint: .top, endPoint: .bottom))
-                    .shadow(color: .black.opacity(0.2), radius: 14, y: 8)
-            )
-        }
-        .transition(.opacity)
+        .disabled(isEmpty) // معطّل إذا الحقل فاضي (نفس شكل التصميم)
     }
  
     // MARK: Actions
     private func submit() {
-        submittedSlogan = slogan.trimmingCharacters(in: .whitespacesAndNewlines)
+        let reply = slogan.trimmingCharacters(in: .whitespacesAndNewlines)
         isFocused = false
-        // هنا تحفظين ردّ المستخدم (submittedSlogan) لو تبين
-        withAnimation { showResult = true }
+        // هنا تحفظين ردّ المستخدم (reply) لو تبين
+        print("Reply for \(brand.name): \(reply)")
+        withAnimation { showPopup = true }
     }
  
-    private func nextBrand() {
-        withAnimation { showResult = false }
+    /// زر Replay: يسكّر البوب أب ويبدأ براند جديد
+    private func replay() {
+        withAnimation { showPopup = false }
         slogan = ""
         brandIndex = (brandIndex + 1) % brands.count
+    }
+ 
+    /// زر Home: حالياً يرجع للصفحة السابقة، غيّريه لتنقّل صفحة Home عندكم
+    private func goHome() {
+        showPopup = false
+        dismiss()
     }
 }
  
 #Preview {
     Slogansparkview()
 }
+ 
