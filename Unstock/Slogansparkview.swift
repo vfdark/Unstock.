@@ -123,7 +123,7 @@ struct Slogansparkview: View {
         Image(brand.logo)
             .resizable()
             .aspectRatio(contentMode: brand.fillsCircle ? .fill : .fit)
-            .padding(brand.fillsCircle ? 0 :12)
+            .padding(brand.fillsCircle ? 0 : 12)
             .frame(width: 182, height: 182)
             .background(Color.white)
             .clipShape(Circle())
@@ -147,6 +147,10 @@ struct Slogansparkview: View {
             TextField("", text: $slogan,
                       prompt: Text("Type your slogan here").foregroundColor(.gray))
                 .focused($isFocused)
+                .submitLabel(.done)                          // زر الكيبورد يكتب Done
+                .onSubmit { if !isEmpty { submit() } }       // الضغط عليه يرسل الإجابة
+                .autocorrectionDisabled()                    // بدون تصحيح تلقائي
+                .textInputAutocapitalization(.sentences)     // أول حرف كبير
                 .font(.system(size: 17))
                 .padding(.horizontal, 24)
                 .frame(width: 292, height: 58)
