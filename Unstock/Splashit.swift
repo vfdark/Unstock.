@@ -91,6 +91,13 @@ struct SplashIt: View {
     @State private var color: Color = .black
     @State private var size: CGFloat = 17
 
+    /// Logos shown one after another. Each name must match an image in Assets.
+    /// To add another logo, drop the image in Assets and add its name here.
+    private let logos = ["Pepsi", "mac", "starbucks"]
+    @State private var logoIndex = 0
+    /// Shows the "Good job" popup (your friend's screen).
+    @State private var showGoodJob = false
+
     /// true = Apple's iOS markup palette (docked at the bottom by iOS).
     /// false = the custom toolbar.
     private let useSystemPalette = true
@@ -111,7 +118,31 @@ struct SplashIt: View {
         .background(Color(red: 254.0 / 255, green: 250.0 / 255, blue: 243.0 / 255))
         .ignoresSafeArea()
         .toolbar(.hidden, for: .navigationBar)
+        .overlay {
+            if showGoodJob {
+                GoodJobPopup(
+                    onReplay: replayWithNextLogo,
+                    onClose: { dismiss() }
+                )
+                .transition(.opacity)
+            }
+        }
+        .animation(.easeInOut(duration: 0.25), value: showGoodJob)
     }
+
+    // MARK: Actions
+
+    /// Called by the popup's Replay button: closes the popup, clears the drawing
+    /// and switches to the next logo (wraps back to the first after the last one).
+    private func replayWithNextLogo() {
+        canvasView.drawing = PKDrawing()
+        showGoodJob = false
+        withAnimation(.easeInOut(duration: 0.3)) {
+            logoIndex = (logoIndex + 1) % logos.count
+        }
+    }
+
+    // MARK: Layout
 
     private var referenceLayout: some View {
         ZStack(alignment: .topLeading) {
@@ -141,6 +172,7 @@ struct SplashIt: View {
                     .font(.system(size: 28, weight: .medium))
                     .foregroundStyle(Color(white: 0.15))
                     .frame(width: 44, height: 44)
+                    .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
             .accessibilityLabel("Back")
@@ -182,8 +214,9 @@ struct SplashIt: View {
                     .position(x: 292, y: 933.3)
             }
 
+            // Done: opens the "Good job" popup.
             Button {
-                dismiss()
+                showGoodJob = true
             } label: {
                 Text("Done")
                     .font(.system(size: 34, weight: .bold))
@@ -197,7 +230,7 @@ struct SplashIt: View {
             }
             .buttonStyle(.plain)
             // With the system palette, iOS docks it at the bottom of the screen,
-            // so Done moves up into the card where the custom toolbar used to be.
+            // so the button moves up into the card where the custom toolbar used to be.
             .position(x: 288, y: useSystemPalette ? 900 : 1129)
         }
     }
@@ -211,12 +244,14 @@ struct SplashIt: View {
             PencilCanvas(canvasView: canvasView, tool: tool, color: color,
                          size: size, useSystemPalette: useSystemPalette)
 
-            Image("Pepsi")
+            Image(logos[logoIndex])
                 .resizable()
                 .scaledToFit()
                 .padding(10)
                 .blendMode(.multiply)
                 .allowsHitTesting(false)
+                .id(logoIndex)
+                .transition(.opacity)
         }
         .frame(width: logoSize, height: logoSize)
         .clipShape(Circle())
@@ -324,6 +359,32 @@ struct SplashIt: View {
         }
         .buttonStyle(.plain)
         .accessibilityAddTraits(tool == t ? .isSelected : [])
+    }
+}
+
+// MARK: - Placeholder popup
+// TEMPORARY: replace this with your friend's "Good job" screen, then delete this struct.
+// Her screen only needs two closures: `onReplay` (Replay button) and `onClose` (Close / X).
+struct GoodJobPopup: View {
+    var onReplay: () -> Void
+    var onClose: () -> Void
+
+    var body: some View {
+        ZStack {
+            Color.black.opacity(0.35).ignoresSafeArea()
+            VStack(spacing: 20) {
+                Text("Good job!")
+                    .font(.system(size: 34, weight: .bold))
+                HStack(spacing: 16) {
+                    Button("Replay", action: onReplay)
+                        .buttonStyle(.borderedProminent)
+                    Button("Close", action: onClose)
+                        .buttonStyle(.bordered)
+                }
+            }
+            .padding(32)
+            .background(.white, in: RoundedRectangle(cornerRadius: 24))
+        }
     }
 }
 
