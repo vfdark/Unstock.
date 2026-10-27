@@ -7,14 +7,15 @@ struct ShapeUp: View {
 
     @State private var canvasView = PKCanvasView()
     @State private var toolPicker = PKToolPicker()
+    @State private var showSuccessPopup = false
+
     
     private let puzzles: [(image: String, question: String)] = [
         ("2Lines", "This is not a triangle, This is a .."),
         ("Shape2", "This is not a wave, This is a .."),
         ("Shape3", "This is not a circle, This is a ..")
     ]
-    @State private var puzzleIndex = 2
-    @State private var showGoodJob = false
+    @State private var puzzleIndex = 0
 
     private let cardTop: CGFloat = 400
     private let bgColor = Color(red: 254.0 / 255, green: 250.0 / 255, blue: 243.0 / 255)
@@ -24,15 +25,74 @@ struct ShapeUp: View {
             let scale = min(geometry.size.width / 585, geometry.size.height / 1261)
 
             referenceLayout
-                .frame(width: 300, height: 1300)
+                .frame(width: 585, height: 1261)
                 .scaleEffect(scale)
                 .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
         }
         .background(bgColor)
         .ignoresSafeArea()
         .toolbar(.hidden, for: .navigationBar)
-    }
+        .overlay {
+            if showSuccessPopup {
+                ZStack {
+                    Color.black.opacity(0.4)
+                        .ignoresSafeArea()
 
+                    VStack(spacing: 20) {
+                        Image("checkmark")
+                            .padding(.top, 50)
+
+                        Text("Good Job!")
+                            .font(.system(size: 50))
+                            .fontWeight(.bold)
+                            .foregroundColor(.black)
+
+                        Button {
+                            showSuccessPopup = false
+                            dismiss()
+                        } label: {
+                            Text("Home")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                                .frame(width: 200, height: 45)
+                                .background(Color.black)
+                                .cornerRadius(25)
+                        }
+
+                        Button {
+                            replayWithNextPuzzle()
+                        } label: {
+                            Text("Replay")
+                                .font(.headline)
+                                .foregroundColor(.black)
+                                .frame(width: 200, height: 45)
+                                .background(Color.white)
+                                .cornerRadius(25)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 25)
+                                        .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                                )
+                        }
+                    }
+                    .padding(30)
+                    .background(Color("backgraundyellow"))
+                    .cornerRadius(30)
+                    .shadow(radius: 10)
+                    .padding(.horizontal, 40)
+                }
+                .transition(.opacity)
+            }
+        }
+        .animation(.easeInOut(duration: 0.25), value: showSuccessPopup)
+    }
+    private func replayWithNextPuzzle() {
+        canvasView.drawing = PKDrawing()
+        showSuccessPopup = false
+        withAnimation(.easeInOut(duration: 0.3)) {
+            puzzleIndex = (puzzleIndex + 1) % puzzles.count
+        }
+    }
+    
     private var referenceLayout: some View {
         ZStack(alignment: .topLeading) {
             bgColor
@@ -110,7 +170,7 @@ struct ShapeUp: View {
 
             // Done
             Button {
-                dismiss()
+                showSuccessPopup = true
             } label: {
                 Text("Done")
                     .font(.system(size: 34, weight: .bold))
