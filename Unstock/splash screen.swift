@@ -19,8 +19,27 @@ enum SplashDesign {
 
 struct SplashView: View {
     @State private var logoVisible = false
+    @State private var goHome = false
 
     var body: some View {
+        ZStack {
+            if goHome {
+                HomeView()
+                    .transition(.opacity)
+            } else {
+                splashContent
+                    .transition(.opacity)
+            }
+        }
+        .task {
+            try? await Task.sleep(nanoseconds: 2_500_000_000) // 2.5 ثانية
+            withAnimation(.easeInOut(duration: 0.5)) {
+                goHome = true
+            }
+        }
+    }
+
+    private var splashContent: some View {
         GeometryReader { geo in
             ZStack {
                 SplashDesign.cream
@@ -61,7 +80,6 @@ struct SplashView: View {
         }
     }
 }
-
 #Preview {
     SplashView()
 }

@@ -124,7 +124,7 @@ struct HomeView: View {
                         }
 
                         NavigationLink {
-                            ShapeUpView()
+                            ShapeUp()
                         } label: {
                             ExerciseCard(
                                 icon: Image(.shapeUp),
@@ -137,7 +137,7 @@ struct HomeView: View {
                         }
 
                         NavigationLink {
-                            SloganSparkView()
+                            Slogansparkview()
                         } label: {
                             ExerciseCard(
                                 icon: Image(.sloganSpark),
