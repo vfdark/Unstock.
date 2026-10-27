@@ -111,7 +111,7 @@ struct HomeView: View {
                     VStack(spacing: 20) {
 
                         NavigationLink {
-                            SplashItView()
+                            Splashit()
                         } label: {
                             ExerciseCard(
                                 icon: Image(.paintArt),
@@ -161,6 +161,9 @@ struct HomeView: View {
         }
     }
 }
+
+
+
 
 #Preview {
     HomeView()
