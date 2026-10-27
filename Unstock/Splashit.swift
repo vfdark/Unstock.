@@ -81,7 +81,7 @@ struct PencilCanvas: UIViewRepresentable {
 
 // MARK: - Screen
 
-struct SplashIt: View {
+struct Splashit: View {
 
     @Environment(\.dismiss) private var dismiss
 
@@ -389,5 +389,5 @@ struct GoodJobPopup: View {
 }
 
 #Preview {
-    SplashIt()
+    Splashit()
 }
