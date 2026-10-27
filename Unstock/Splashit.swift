@@ -95,7 +95,7 @@ struct Splashit: View {
     /// To add another logo, drop the image in Assets and add its name here.
     private let logos = ["Pepsi", "mac", "starbucks"]
     @State private var logoIndex = 0
-    /// Shows the "Good job" popup (your friend's screen).
+    /// Shows the "Good Job!" popup (same design as Shape Up).
     @State private var showGoodJob = false
 
     /// true = Apple's iOS markup palette (docked at the bottom by iOS).
@@ -120,10 +120,54 @@ struct Splashit: View {
         .toolbar(.hidden, for: .navigationBar)
         .overlay {
             if showGoodJob {
-                GoodJobPopup(
-                    onReplay: replayWithNextLogo,
-                    onClose: { dismiss() }
-                )
+                ZStack {
+                    Color.black.opacity(0.4)
+                        .ignoresSafeArea()
+
+                    VStack(spacing: 20) {
+                        Image("checkmark")
+                            .padding(.top, 50)
+
+                        Text("Good Job!")
+                            .font(.system(size: 50))
+                            .fontWeight(.bold)
+                            .foregroundColor(.black)
+
+                        // Main action
+                        Button {
+                            showGoodJob = false
+                            dismiss()
+                        } label: {
+                            Text("Home")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                                .frame(width: 200, height: 45)
+                                .background(Color.black)
+                                .cornerRadius(25)
+                        }
+
+                        // Secondary action
+                        Button {
+                            replayWithNextLogo()
+                        } label: {
+                            Text("Replay")
+                                .font(.headline)
+                                .foregroundColor(.black)
+                                .frame(width: 200, height: 45)
+                                .background(Color.white)
+                                .cornerRadius(25)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 25)
+                                        .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                                )
+                        }
+                    }
+                    .padding(30)
+                    .background(Color("backgraundyellow"))
+                    .cornerRadius(30)
+                    .shadow(radius: 10)
+                    .padding(.horizontal, 40)
+                }
                 .transition(.opacity)
             }
         }
@@ -359,32 +403,6 @@ struct Splashit: View {
         }
         .buttonStyle(.plain)
         .accessibilityAddTraits(tool == t ? .isSelected : [])
-    }
-}
-
-// MARK: - Placeholder popup
-// TEMPORARY: replace this with your friend's "Good job" screen, then delete this struct.
-// Her screen only needs two closures: `onReplay` (Replay button) and `onClose` (Close / X).
-struct GoodJobPopup: View {
-    var onReplay: () -> Void
-    var onClose: () -> Void
-
-    var body: some View {
-        ZStack {
-            Color.black.opacity(0.35).ignoresSafeArea()
-            VStack(spacing: 20) {
-                Text("Good job!")
-                    .font(.system(size: 34, weight: .bold))
-                HStack(spacing: 16) {
-                    Button("Replay", action: onReplay)
-                        .buttonStyle(.borderedProminent)
-                    Button("Close", action: onClose)
-                        .buttonStyle(.bordered)
-                }
-            }
-            .padding(32)
-            .background(.white, in: RoundedRectangle(cornerRadius: 24))
-        }
     }
 }
 

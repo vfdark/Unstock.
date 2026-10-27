@@ -130,7 +130,7 @@ struct ShapeUp: View {
             .position(x: 55, y: 181)
 
             // العنوان
-            Text("Shape UP")
+            Text("Shape Up")
                 .font(.system(size: 34, weight: .bold))
                 .foregroundStyle(.black)
                 .position(x: 292, y: 182)
