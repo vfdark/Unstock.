@@ -1,27 +1,27 @@
-//
-//  Slogansparkview.swift
+
 //  Unstock
 //
 //  Created by Renad Sameer Alharbi on 14/05/1448 AH.
 //
-
+ 
 import SwiftUI
  
 // MARK: - Brand model
 struct Brand: Identifiable {
     let id = UUID()
     let name: String
-    let logo: String              // اسم الـ Image Set في Assets
-    let slogan: String            // السلوقن الأصلي (غير مستخدم حالياً في البوب أب)
-    var fillsCircle: Bool = false // true = الصورة تغطي الدايرة كاملة
+    let logo: String              // Image Set name in Assets
+    let slogan: String            // Original slogan (not used in the popup)
+    var fillsCircle: Bool = false // true = image fills the whole circle
  
     static let all: [Brand] = [
         Brand(name: "Kitkat", logo: "kitkatlogo", slogan: "Have a break, have a KitKat"),
-        Brand(name: "Red Bull", logo: "redbulllogo", slogan: "Red Bull gives you wings", fillsCircle: true)
+        Brand(name: "Red Bull", logo: "redbulllogo", slogan: "Red Bull gives you wings", fillsCircle: true),
+        Brand(name: "Nike", logo: "nikelogo", slogan: "Just Do It")
     ]
 }
  
-// MARK: - Wave (الحافة المموجة تحت الهيدر، مقاسات التصميم 402 عرض)
+// MARK: - Wave (header wave edge, design width 402)
 struct WaveShape: Shape {
     func path(in rect: CGRect) -> Path {
         let s = rect.width / 402
@@ -52,7 +52,7 @@ struct Slogansparkview: View {
     private var brand: Brand { brands[brandIndex] }
     private var isEmpty: Bool { slogan.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
  
-    // الألوان (من التصميم)
+    // Colors
     private let pageBackground = Color(red: 0.992, green: 0.980, blue: 0.965)
     private let headerTop      = Color(red: 0.929, green: 0.890, blue: 0.710)
     private let headerBottom   = Color(red: 0.969, green: 0.949, blue: 0.863)
@@ -86,21 +86,21 @@ struct Slogansparkview: View {
             .scrollDismissesKeyboard(.interactively)
             .scrollBounceBehavior(.basedOnSize)
  
-            // POP UP: نفس تصميم Shape Up
+            // Popup (same design as Shape Up)
             if showPopup {
                 ZStack {
                     Color.black.opacity(0.4)
                         .ignoresSafeArea()
-
+ 
                     VStack(spacing: 20) {
                         Image("checkmark")
                             .padding(.top, 50)
-
+ 
                         Text("Good Job!")
                             .font(.system(size: 50))
                             .fontWeight(.bold)
                             .foregroundColor(.black)
-
+ 
                         Button {
                             goHome()
                         } label: {
@@ -111,7 +111,7 @@ struct Slogansparkview: View {
                                 .background(Color.black)
                                 .cornerRadius(25)
                         }
-
+ 
                         Button {
                             replay()
                         } label: {
@@ -138,7 +138,7 @@ struct Slogansparkview: View {
         }
         .toolbar(.hidden, for: .navigationBar)   // hides the system back button
     }
-
+ 
     // MARK: Title bar
     private var titleBar: some View {
         ZStack {
@@ -160,7 +160,7 @@ struct Slogansparkview: View {
         .foregroundColor(.black)
     }
  
-    // MARK: Logo (دايرة)
+    // MARK: Logo (circle)
     private var logoCircle: some View {
         Image(brand.logo)
             .resizable()
@@ -189,10 +189,10 @@ struct Slogansparkview: View {
             TextField("", text: $slogan,
                       prompt: Text("Type your slogan here").foregroundColor(.gray))
                 .focused($isFocused)
-                .submitLabel(.done)                          // زر الكيبورد يكتب Done
-                .onSubmit { if !isEmpty { submit() } }       // الضغط عليه يرسل الإجابة
-                .autocorrectionDisabled()                    // بدون تصحيح تلقائي
-                .textInputAutocapitalization(.sentences)     // أول حرف كبير
+                .submitLabel(.done)
+                .onSubmit { if !isEmpty { submit() } }
+                .autocorrectionDisabled()
+                .textInputAutocapitalization(.sentences)
                 .font(.system(size: 17))
                 .padding(.horizontal, 24)
                 .frame(width: 292, height: 58)
@@ -222,26 +222,25 @@ struct Slogansparkview: View {
                 .background(Capsule().fill(Color.white))
                 .overlay(Capsule().stroke(borderGray, lineWidth: 1))
         }
-        .disabled(isEmpty) // معطّل إذا الحقل فاضي (نفس شكل التصميم)
+        .disabled(isEmpty)
     }
  
     // MARK: Actions
     private func submit() {
         let reply = slogan.trimmingCharacters(in: .whitespacesAndNewlines)
         isFocused = false
-        // هنا تحفظين ردّ المستخدم (reply) لو تبين
         print("Reply for \(brand.name): \(reply)")
         withAnimation { showPopup = true }
     }
  
-    /// زر Replay: يسكّر البوب أب ويبدأ براند جديد
+    /// Replay: closes the popup and moves to the next brand
     private func replay() {
         withAnimation { showPopup = false }
         slogan = ""
         brandIndex = (brandIndex + 1) % brands.count
     }
  
-    /// زر Home: حالياً يرجع للصفحة السابقة، غيّريه لتنقّل صفحة Home عندكم
+    /// Home: currently goes back to the previous screen
     private func goHome() {
         showPopup = false
         dismiss()
@@ -251,3 +250,4 @@ struct Slogansparkview: View {
 #Preview {
     Slogansparkview()
 }
+ 
