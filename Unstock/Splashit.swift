@@ -125,7 +125,7 @@ struct Splashit: View {
                         .ignoresSafeArea()
 
                     VStack(spacing: 20) {
-                        Image("checkmark")
+                        Image(.checkmarkIcon)
                             .padding(.top, 50)
 
                         Text("Good Job!")

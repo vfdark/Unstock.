@@ -14,7 +14,7 @@ struct PopUpView: View {
  
     var body: some View {
         VStack(spacing: 24) {
-            Image(systemName: "checkmark.circle.fill")
+            Image(.checkmarkIcon)
                 .font(.system(size: 90))
                 .foregroundColor(.orange)
  

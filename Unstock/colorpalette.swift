@@ -67,10 +67,12 @@ struct ColorpaletteView: View {
                 VStack(spacing: 20) {
                     
                     ZStack {
-                        Image("checkmark")
+                        Image(.checkmarkIcon)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 100, height: 100)
                     }
                     .padding(.top, 50)
-                    
                     
                     Text("Good Job!")
                         .font(.system(size: 50))
