@@ -7,9 +7,7 @@
 
 import SwiftUI
  
-// ⚠️ نسخة مؤقتة عشان المشروع يشتغل.
-// لما البنت الثانية تخلّص صفحة الـ POP UP: احذفي هذا الملف،
-// وتأكدي إن صفحتها اسمها PopUpView وفيها closures: onHome و onReplay.
+
 struct PopUpView: View {
     var onHome: () -> Void
     var onReplay: () -> Void
